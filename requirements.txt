@@ -1,0 +1,12 @@
+# ---- Core Libraries ----
+requests
+python-dotenv
+requests-toolbelt
+ansible
+netmiko
+
+# ---- NETCONF Client ----
+ncclient
+
+# ---- Optional but Recommended for Ansible ----
+paramiko
