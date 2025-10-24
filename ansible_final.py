@@ -17,3 +17,20 @@ def set_motd(host_ip, message):
         "-e", f"motd_message='{message}'"
     ]
     
+    try:
+        process = subprocess.run(command_args, capture_output=True, text=True, check=True, timeout=90)
+        
+        # We only care that the command succeeded (failed=0).
+        if 'failed=0' in process.stdout:
+            print("Ansible MOTD command successful.")
+            return "Ok: success"
+        else:
+            print(f"Ansible MOTD command failed. Output:\n{process.stdout}\n{process.stderr}")
+            return "Error: Failed to set MOTD via Ansible."
+            
+    except subprocess.CalledProcessError as e:
+        print(f"Ansible execution failed:\nSTDOUT: {e.stdout}\nSTDERR: {e.stderr}")
+        return f"Error: Ansible execution failed. Check logs."
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return f"An unexpected error occurred: {e}"
