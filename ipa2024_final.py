@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 # Import functions from other modules with aliases to avoid name conflicts
 from restconf_final import create_interface as restconf_create, delete_interface as restconf_delete, enable_interface as restconf_enable, disable_interface as restconf_disable, get_interface_status as restconf_status
 from netconf_final import create_interface as netconf_create, delete_interface as netconf_delete, enable_interface as netconf_enable, disable_interface as netconf_disable, get_interface_status as netconf_status
+from netmiko_final import get_motd
+from ansible_final import set_motd
 
 load_dotenv()
 ACCESS_TOKEN = os.environ.get("WEBX_ACCESS_TOKEN")
@@ -82,6 +84,12 @@ while True:
                         elif command == "enable": response_message = netconf_enable(target_ip)
                         elif command == "disable": response_message = netconf_disable(target_ip)
                         elif command == "status": response_message = netconf_status(target_ip)
+                elif command == "motd":
+                    if len(parts) > 3:
+                        motd_text = " ".join(parts[3:])
+                        response_message = set_motd(target_ip, motd_text)
+                    else:
+                        response_message = get_motd(target_ip)
                 else:
                     response_message = "Error: No command found."
         else:
