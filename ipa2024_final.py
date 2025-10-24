@@ -11,7 +11,7 @@ from netconf_final import create_interface as netconf_create, delete_interface a
 load_dotenv()
 ACCESS_TOKEN = os.environ.get("WEBX_ACCESS_TOKEN")
 ROOM_ID = os.environ.get("ROOM_ID")
-STUDENT_ID = "66070216" # <-- Change this to your student ID
+STUDENT_ID = "66070216"
 VALID_IPS = ["10.0.15.61", "10.0.15.62", "10.0.15.63", "10.0.15.64", "10.0.15.65"]
 
 # A dictionary to store the last selected method for each user
@@ -48,7 +48,10 @@ while True:
         # --- Command Parsing Logic ---
         if len(parts) == 2:
             command = parts[1].lower()
-            if command == "netconf":
+            if command == "restconf":
+                user_states[person_id] = "restconf"
+                response_message = "Ok: Restconf"
+            elif command == "netconf":
                 user_states[person_id] = "netconf"
                 response_message = "Ok: Netconf"
             else:
@@ -67,12 +70,20 @@ while True:
                 response_message = "Error: No method specified"
             else:
                 if command in ["create", "delete", "enable", "disable", "status"]:
-                    if selected_method == "netconf":
+                    if selected_method == "restconf":
+                        if command == "create": response_message = restconf_create(target_ip)
+                        elif command == "delete": response_message = restconf_delete(target_ip)
+                        elif command == "enable": response_message = restconf_enable(target_ip)
+                        elif command == "disable": response_message = restconf_disable(target_ip)
+                        elif command == "status": response_message = restconf_status(target_ip)
+                    elif selected_method == "netconf":
                         if command == "create": response_message = netconf_create(target_ip)
                         elif command == "delete": response_message = netconf_delete(target_ip)
                         elif command == "enable": response_message = netconf_enable(target_ip)
                         elif command == "disable": response_message = netconf_disable(target_ip)
                         elif command == "status": response_message = netconf_status(target_ip)
+                else:
+                    response_message = "Error: No command found."
         else:
             response_message = "Error: No command specified"
 
